@@ -9,6 +9,15 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,6 +65,31 @@ public class MainActivity extends AppCompatActivity {
      * Fetch JSON-data from server
      */
     public void fetchChannelList() {
-        Log.i("test", "show file");
+        String parsedString = "asd";
+
+        try {
+
+            URL url = new URL("http://benlly.framgia.vn/v1.0/channels/");
+            URLConnection conn = url.openConnection();
+            HttpURLConnection httpConn = (HttpURLConnection) conn;
+
+            httpConn.setRequestMethod("GET");
+            httpConn.setRequestProperty("X-Benlly-Api-Token", "cf5b8d8429699057fa85af897571c178d10ef466b514589c090df2597850aa1e");
+            httpConn.setRequestProperty("X-Benlly-Api-Version", "1.0");
+            httpConn.setRequestProperty("X-Benlly-Device-Type", "iOS");
+            httpConn.setDoInput(true);
+            httpConn.setDoOutput(true);
+            httpConn.connect();
+
+            InputStream info = new BufferedInputStream(httpConn.getInputStream());
+            BufferedReader r = new BufferedReader(new InputStreamReader(info));
+            parsedString = r.readLine();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        TextView channelJson = (TextView)findViewById(R.id.channels_json);
+        channelJson.setText(parsedString);
     }
 }
